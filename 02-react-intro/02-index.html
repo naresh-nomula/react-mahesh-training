@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>React Intro</title>
+	<script src="react.js"></script>
+	<script src="react-dom.js"></script>
+	<script>
+		window.addEventListener('DOMContentLoaded', init);
+		function init(){
+			var btnRender = document.getElementById('btnRender');
+			btnRender.addEventListener('click', onBtnRenderClick);
+		}
+		var counter = 0;
+		function onBtnRenderClick(){
+			var h1Ele = React.createElement('h1', null, Date());
+			ReactDOM.render(h1Ele, document.getElementById('root'));
+			document.getElementById('counter').innerHTML = ++counter;
+		}
+	</script>
+</head>
+<body>
+	<div id="counter"></div>
+	<input type="button" value="Render" id="btnRender">
+	<div id="root"></div>
+</body>
+</html>
