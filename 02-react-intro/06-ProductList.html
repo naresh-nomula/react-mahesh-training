@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Product List</title>
+	<script src="react.js"></script>
+	<script src="react-dom.js"></script>
+	<script src="babel.min.js"></script>
+	<script type="text/babel">
+		class ProductList extends React.Component{
+
+			state = { list : []};
+			txtProductNameRef = React.createRef();
+			
+			constructor(props){
+				super(props);
+				this.onAddNewClick = this.onAddNewClick.bind(this);
+			}
+
+			onAddNewClick(){
+				let newProductName = this.txtProductNameRef.current.value;
+				let { list } = this.state;
+				list.push(newProductName);
+				this.setState({list : list});
+			}
+			render(){
+				let { list } = this.state; 
+				let productItems = [];
+				for(let index = 0, count = list.length; index < count; index++){
+					let productItem = (<li key={index}>{list[index]}</li>);
+					productItems.push(productItem);
+				}
+				return(
+					<div>
+						<h1>Products</h1>
+						<hr/>
+						<label>Product Name :</label>
+						<input type="text" ref={this.txtProductNameRef} />
+						<input type="button" value="Add New" onClick={this.onAddNewClick} />
+						<ol>
+							{productItems}
+						</ol>
+					</div>
+				)
+			}
+		}	
+
+		class ProductCount extends React.Component{
+			render(){
+				return(
+					<div>0</div>
+				);
+			}
+		}
+		ReactDOM.render(
+			<div>
+				<ProductCount />
+				<ProductList />
+			</div>,
+			document.getElementById('root'));
+	</script>
+</head>
+<body>
+	<div id="root"></div>
+</body>
+</html>
