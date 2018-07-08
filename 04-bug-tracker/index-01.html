@@ -97,13 +97,14 @@
 			}
 			render(){
 				let { bugs, toggle, removeClosed } = this.props,
+					closedCount = bugs.reduce((result, bug) => bug.isClosed ? ++result : result, 0),
 					bugItems = bugs.map((bug,index) => (
 						<BugItem bug={bug} key={index} toggle={toggle} />
 					));
 				return(
 					<div>
 						<section className="stats">
-							<span className="closed">1</span>
+							<span className="closed">{closedCount}</span>
 							<span> / </span>
 							<span>{bugs.length}</span>
 						</section>
