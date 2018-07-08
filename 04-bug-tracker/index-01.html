@@ -51,7 +51,7 @@
 	<script src="react.js"></script>
 	<script src="react-dom.js"></script>
 	<script src="babel.min.js"></script>
-	<script src="stateManager.js"></script>
+	<script src="redux.js"></script>
 	<script type="text/babel">
 
 		function bugsReducer(currentState=[], action ){
@@ -63,6 +63,11 @@
 			if (action.type === 'UPDATE'){
 				let {oldBug, newBug} = action.payload;
 				let newState = currentState.map(bug => bug === oldBug ? newBug : bug);
+				return newState;
+			}
+			if (action.type === 'REMOVE'){
+				let bugsToRemove = action.payload;
+				let newState = currentState.filter(bug => bugsToRemove.indexOf(bug) === -1);
 				return newState;
 			}
 			return currentState;
@@ -91,7 +96,7 @@
 				this.props.addNew(this.state.newBugName);
 			}
 			render(){
-				let { bugs, toggle } = this.props,
+				let { bugs, toggle, removeClosed } = this.props,
 					bugItems = bugs.map((bug,index) => (
 						<BugItem bug={bug} key={index} toggle={toggle} />
 					));
@@ -120,7 +125,7 @@
 							<ol>
 								{bugItems}
 							</ol>
-							<input type="button" value="Remove Closed" />
+							<input type="button" value="Remove Closed" onClick={() => removeClosed(bugs)} />
 						</section>
 					</div>
 				)
@@ -141,11 +146,16 @@
 				let toggledBug = {...bugToToggle, isClosed : !bugToToggle.isClosed};
 				let action = { type : 'UPDATE', payload : {oldBug : bugToToggle, newBug : toggledBug}};
 				return action;
+			},
+			removeClosed(bugs){
+				let closedBugs = bugs.filter(bug => bug.isClosed);
+				let action = { type : 'REMOVE', payload : closedBugs};
+				return action;
 			}
 		}
 
-		let store = SM.createStore(bugsReducer);
-		let bugActions = SM.bindActionCreators(bugActionCreators, store.dispatch);
+		let store = Redux.createStore(bugsReducer);
+		let bugActions = Redux.bindActionCreators(bugActionCreators, store.dispatch);
 
 		function renderApp(){
 			let bugs = store.getState();
