@@ -7,10 +7,38 @@
 	<script src="react-dom.js"></script>
 	<script src="babel.min.js"></script>
 	<script type="text/babel">
+		class EventEmitter{
+			_listeners = [];
+
+			triggerChange(){
+				this._listeners.forEach(listenerFn => listenerFn());
+			}
+			subscribe(listenerFn){
+				if (typeof listenerFn === 'function')
+					this._listeners.push(listenerFn);
+			};
+		}
+
+		class ProductsCollection extends EventEmitter{
+			_list = [];
+
+			constructor(){
+				super();
+			}
+			addNew(productName){
+				this._list.push(productName);
+				this.triggerChange();
+			}
+			getAll(){
+				return [...this._list];
+			}
+		}
+
+
+
 		class ProductList extends React.Component{
 
-			state = { list : [], newProductName : ''};
-			
+			state = { newProductName : ''};
 			
 			constructor(props){
 				super(props);
@@ -18,13 +46,10 @@
 			}
 
 			onAddNewClick(){
-				let { list } = this.state;
-				list.push(this.state.newProductName);
-				this.setState({list : list});
-				this.props.onAdded();
+				this.props.model.addNew(this.state.newProductName);
 			}
 			render(){
-				let { list } = this.state; 
+				let list = this.props.model.getAll();
 				let productItems = [];
 				for(let index = 0, count = list.length; index < count; index++){
 					let productItem = (<li key={index}>{list[index]}</li>);
@@ -54,24 +79,27 @@
 		}
 
 		class App extends React.Component{
-			state = {count : 0};
-			onNewProductAdded(){
-				this.setState({ count : ++this.state.count});
-			}
+			
+			
 			render(){
 				return(
 					<div>
-						<ProductCount data={this.state.count}/>
-						<ProductList onAdded={this.onNewProductAdded.bind(this)} />
+						<ProductCount data={this.props.model.getAll().length}/>
+						<ProductList model={this.props.model} />
 					</div>
 				)
 			}
 		}
-		ReactDOM.render(
-			<App>
-				
-			</App>,
-			document.getElementById('root'));
+
+		var productsCollection = new ProductsCollection();
+		function renderApp(){
+			ReactDOM.render(
+				<App model={productsCollection} />
+				, document.getElementById('root'));
+		}
+		renderApp();
+		productsCollection.subscribe(renderApp);
+
 	</script>
 </head>
 <body>
