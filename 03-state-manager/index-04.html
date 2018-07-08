@@ -27,12 +27,10 @@
 			}
 
 			onDecrementClick(){
-				let action = this.props.decrement();
-				this.props.dispatch(action);
+				this.props.decrement();
 			}
 			onIncrementClick(){
-				let action = this.props.increment();
-				this.props.dispatch(action);
+				this.props.increment();
 			}	
 
 			render(){
@@ -56,13 +54,30 @@
 			}
 		}
 
+		function bindActionCreators(actionCreators, dispatch){
+			let result = {
+				increment(){
+					let action = actionCreators.increment();
+					dispatch(action);
+				},
+				decrement(){
+					let action = actionCreators.decrement();
+					dispatch(action);
+				}
+			}
+			return result;
+		}
+
+
 		let store = SM.createStore(spinnerReducer);
+
+		let spinnerActions = bindActionCreators(spinnerActionCreators, store.dispatch);
 
 		function renderApp(){
 			let spinnerValue = store.getState();
 			{/*ReactDOM.render(<Spinner value={spinnerValue} dispatch={store.dispatch} increment={spinnerActionCreators.increment} decrement={spinnerActionCreators.decrement} />,
 				document.getElementById('root'));*/}
-			ReactDOM.render(<Spinner value={spinnerValue} dispatch={store.dispatch} {...spinnerActionCreators} />,
+			ReactDOM.render(<Spinner value={spinnerValue} dispatch={store.dispatch} {...spinnerActions} />,
 				document.getElementById('root'));
 		}
 		renderApp();
