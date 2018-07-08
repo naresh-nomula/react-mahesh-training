@@ -73,7 +73,13 @@
 				this.props.addNew(this.state.newBugName);
 			}
 			render(){
-				let { bugs } = this.props;
+				let { bugs } = this.props,
+					bugItems = bugs.map((bug,index) => (
+						<li key={index}>
+							<span className="bugname">{bug.name}</span>
+							<div className="datetime">[{bug.createdAt.toString()}]</div>
+						</li>
+					));
 				return(
 					<div>
 						<section className="stats">
@@ -97,14 +103,7 @@
 						</section>
 						<section className="list">
 							<ol>
-								<li>
-									<span className="bugname">[This is bug - 1]</span>
-									<div className="datetime">[Created At]</div>
-								</li>
-								<li>
-									<span className="bugname closed">[This is bug - 2]</span>
-									<div className="datetime">[Created At]</div>
-								</li>
+								{bugItems}
 							</ol>
 							<input type="button" value="Remove Closed" />
 						</section>
