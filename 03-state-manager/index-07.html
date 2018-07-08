@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>State Manager</title>
+	<script src="stateManager.js"></script>
+	<script src="react.js"></script>
+	<script src="react-dom.js"></script>
+	<script src="babel.min.js"></script>
+	<script type="text/babel">
+		function spinnerReducer(currentState = 0, action){
+			if (action.type === 'INCREMENT')
+				return currentState + action.payload;
+			if (action.type === 'DECREMENT')
+				return currentState - action.payload;
+			return currentState;
+		}
+
+
+		{/*class Spinner extends React.Component{
+			render(){
+				let { value, increment, decrement } = this.props;
+				return(
+					<div>
+						<input type="button" value="Decrement" onClick={() => decrement()}/>
+						<span> [ {value} ] </span>
+						<input type="button" value="Increment" onClick={() => increment()}/>
+					</div>
+				)
+			}
+		}*/}
+
+		{/*let Spinner = function(props){
+			let { value, increment, decrement } = props;
+			return(
+				<div>
+					<input type="button" value="Decrement" onClick={() => decrement()}/>
+					<span> [ {value} ] </span>
+					<input type="button" value="Increment" onClick={() => increment()}/>
+				</div>
+			)
+		};
+		*/}
+
+		{/*let Spinner = function({ value, increment, decrement }){
+			return(
+				<div>
+					<input type="button" value="Decrement" onClick={() => decrement()}/>
+					<span> [ {value} ] </span>
+					<input type="button" value="Increment" onClick={() => increment()}/>
+				</div>
+			)
+		};*/}
+
+		{/* Spinner as a Higher Order Component */}
+
+		class Spinner extends React.Component{
+			state = { delta : 0 };
+			render(){
+				let { value, increment, decrement } = this.props;
+				return (
+					<div>
+						<input type="number" onChange={evt => this.setState({delta : evt.target.valueAsNumber})} />
+						<br/>
+						<input type="button" value="Decrement" onClick={() => decrement(this.state.delta)}/>
+						<span> [ {value} ] </span>
+						<input type="button" value="Increment" onClick={() => increment(this.state.delta)}/>
+					</div>
+				);
+			}
+		}
+		
+		
+
+		let spinnerActionCreators = {
+			increment(delta=1){
+				return { type : 'INCREMENT', payload : delta};
+			},
+			decrement(delta=1){
+				return { type : 'DECREMENT', payload : delta};
+			}
+		}
+
+
+
+
+		let store = SM.createStore(spinnerReducer);
+
+		let spinnerActions = SM.bindActionCreators(spinnerActionCreators, store.dispatch);
+
+		function renderApp(){
+			let spinnerValue = store.getState();
+			{/*ReactDOM.render(<Spinner value={spinnerValue} dispatch={store.dispatch} increment={spinnerActionCreators.increment} decrement={spinnerActionCreators.decrement} />,
+				document.getElementById('root'));*/}
+			ReactDOM.render(<Spinner value={spinnerValue} dispatch={store.dispatch} {...spinnerActions} />,
+				document.getElementById('root'));
+		}
+		renderApp();
+		store.subscribe(renderApp);
+
+	</script>
+
+</head>
+<body>
+	<div id="root"></div>
+</body>
+</html>
